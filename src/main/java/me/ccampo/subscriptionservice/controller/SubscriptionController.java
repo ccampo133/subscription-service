@@ -36,6 +36,7 @@ public class SubscriptionController {
         this.subscriptionService = subscriptionService;
     }
 
+    @NotNull
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<SubscriptionResponseResource> createSubscription(@RequestParam @NotNull final String name,
             @RequestParam @NotNull final List<String> messageTypes) {
@@ -51,6 +52,7 @@ public class SubscriptionController {
         return new ResponseEntity<>(resource, headers, HttpStatus.CREATED);
     }
 
+    @NotNull
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<SubscriptionResponseResource> getSubscriptionById(@PathVariable @NotNull final String id) {
         log.info("GET /subscriptions/{}", id);
@@ -68,6 +70,7 @@ public class SubscriptionController {
      * not to support partial updates. Here, I allow it, however the method
      * still remains idempotent.
      */
+    @NotNull
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<SubscriptionResponseResource> updateSubscriptionById(@PathVariable @NotNull final String id,
             @RequestParam @NotNull final Optional<String> name,
@@ -80,6 +83,7 @@ public class SubscriptionController {
         return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 
+    @NotNull
     @RequestMapping(value = "/{id}/messages", method = RequestMethod.POST)
     public ResponseEntity<Message> createMessageForSubscription(@PathVariable @NotNull final String id,
             @RequestParam @NotNull final String type,

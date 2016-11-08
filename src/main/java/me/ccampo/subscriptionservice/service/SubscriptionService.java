@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +28,16 @@ public class SubscriptionService {
 
     private static final Logger log = LoggerFactory.getLogger(SubscriptionService.class);
 
-    private final Map<UUID, Subscription> subscriptions = new ConcurrentHashMap<>();
+    private final Map<UUID, Subscription> subscriptions;
+
+    public SubscriptionService() {
+        subscriptions = new ConcurrentHashMap<>();
+    }
+
+    // Primarily used for testing
+    protected SubscriptionService(@NotNull final Map<UUID, Subscription> subscriptions) {
+        this.subscriptions = Objects.requireNonNull(subscriptions, "subscriptions");
+    }
 
     @NotNull
     public Subscription createSubscription(@NotNull final String name,

@@ -1,6 +1,7 @@
 package me.ccampo.subscriptionservice.model.resource;
 
 import me.ccampo.subscriptionservice.model.Subscription;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -21,6 +22,8 @@ public class SubscriptionResponseResource {
         this.messageCountsByType = messageCountsByType;
     }
 
+    @NotNull
+    @Contract(pure = true)
     public static SubscriptionResponseResource fromSubscription(@NotNull final Subscription subscription) {
         final Map<String, Long> messageCountsByType = subscription.messages.stream()
                 .collect(Collectors.groupingBy(msg -> msg.type, Collectors.counting()));
