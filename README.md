@@ -1,5 +1,7 @@
 # subscription-service
 
+[![Build Status](https://travis-ci.org/ccampo133/subscription-service.svg?branch=develop)](https://travis-ci.org/ccampo133/subscription-service)
+
 A simple message subscription microservice, used as an example in decent REST API development techniques.
 
 This program makes heavy use of 
