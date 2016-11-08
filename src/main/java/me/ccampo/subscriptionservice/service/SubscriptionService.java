@@ -7,6 +7,8 @@ import me.ccampo.subscriptionservice.exception.SubscriptionNotFoundException;
 import me.ccampo.subscriptionservice.model.Message;
 import me.ccampo.subscriptionservice.model.Subscription;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -23,11 +25,14 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class SubscriptionService {
 
+    private static final Logger log = LoggerFactory.getLogger(SubscriptionService.class);
+
     private final Map<UUID, Subscription> subscriptions = new ConcurrentHashMap<>();
 
     @NotNull
     public Subscription createSubscription(@NotNull final String name,
             @NotNull final ImmutableSet<String> messageTypes) {
+        log.info("Creating subscription with name = {} and messageTypes = {}", name, messageTypes);
         final Subscription subscription = new Subscription(name, messageTypes);
         subscriptions.put(subscription.id, subscription);
         return subscription;
@@ -36,6 +41,7 @@ public class SubscriptionService {
     @NotNull
     public Subscription getSubscriptionById(@NotNull final UUID id) throws SubscriptionNotFoundException {
         if (!subscriptionExists(id)) {
+            log.info("Subscription with ID {} was not found", id);
             throw new SubscriptionNotFoundException("Subscription with ID " + id + " was not found");
         }
         return subscriptions.get(id);
@@ -66,11 +72,13 @@ public class SubscriptionService {
     public Message createMessageForSubscription(@NotNull final UUID id, @NotNull final String type,
             @NotNull final String contents) throws SubscriptionNotFoundException, MessageTypeNotSupportedException {
         if (!subscriptionExists(id)) {
+            log.info("Subscription with ID {} was not found", id);
             throw new SubscriptionNotFoundException("Subscription with ID " + id + " was not found");
         }
 
         final Subscription current = getSubscriptionById(id);
         if (!current.messageTypes.contains(type.toLowerCase())) {
+            log.info("Message not created due to unsupported type {}; supported = {}", type, current.messageTypes);
             throw new MessageTypeNotSupportedException("Subscription does not support messages of type " + type);
         }
 

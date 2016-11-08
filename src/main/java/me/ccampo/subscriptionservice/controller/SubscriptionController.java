@@ -6,6 +6,8 @@ import me.ccampo.subscriptionservice.model.Subscription;
 import me.ccampo.subscriptionservice.model.resource.SubscriptionResponseResource;
 import me.ccampo.subscriptionservice.service.SubscriptionService;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,8 @@ import java.util.UUID;
 @RequestMapping("/subscriptions")
 public class SubscriptionController {
 
+    private static final Logger log = LoggerFactory.getLogger(SubscriptionController.class);
+
     private final SubscriptionService subscriptionService;
 
     @Autowired
@@ -35,6 +39,7 @@ public class SubscriptionController {
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<SubscriptionResponseResource> createSubscription(@RequestParam @NotNull final String name,
             @RequestParam @NotNull final List<String> messageTypes) {
+        log.info("POST /subscriptions; name = {}, messageTypes = {}", name, messageTypes);
         final ImmutableSet<String> types = ImmutableSet.copyOf(messageTypes);
         final Subscription subscription = subscriptionService.createSubscription(name, types);
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -42,13 +47,16 @@ public class SubscriptionController {
         final HttpHeaders headers = new HttpHeaders();
         headers.setLocation(location);
         final SubscriptionResponseResource resource = SubscriptionResponseResource.fromSubscription(subscription);
+        log.info("Subscription successfully created with ID = {}", subscription.id);
         return new ResponseEntity<>(resource, headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<SubscriptionResponseResource> getSubscriptionById(@PathVariable @NotNull final String id) {
+        log.info("GET /subscriptions/{}", id);
         final Subscription subscription = subscriptionService.getSubscriptionById(UUID.fromString(id));
         final SubscriptionResponseResource resource = SubscriptionResponseResource.fromSubscription(subscription);
+        log.info("Successfully retrieved subscription with ID {}", id);
         return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 
@@ -64,10 +72,11 @@ public class SubscriptionController {
     public ResponseEntity<SubscriptionResponseResource> updateSubscriptionById(@PathVariable @NotNull final String id,
             @RequestParam @NotNull final Optional<String> name,
             @RequestParam(required = false, defaultValue = "") @NotNull final List<String> messageTypes) {
+        log.info("PUT /subscriptions/{}; name = {}, messageTypes = {}", id, name, messageTypes);
         final ImmutableSet<String> types = ImmutableSet.copyOf(messageTypes);
-        final Subscription subscription =
-                subscriptionService.updateSubscriptionById(UUID.fromString(id), name, types);
+        final Subscription subscription = subscriptionService.updateSubscriptionById(UUID.fromString(id), name, types);
         final SubscriptionResponseResource resource = SubscriptionResponseResource.fromSubscription(subscription);
+        log.info("Successfully updated subscription with ID {}", id);
         return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 
@@ -75,7 +84,9 @@ public class SubscriptionController {
     public ResponseEntity<Message> createMessageForSubscription(@PathVariable @NotNull final String id,
             @RequestParam @NotNull final String type,
             @RequestParam @NotNull final String contents) {
+        log.info("POST /subscriptions/{}/messages; type = {}, contents = {}", id, type, contents);
         final Message message = subscriptionService.createMessageForSubscription(UUID.fromString(id), type, contents);
+        log.info("Successfully created message with ID {} on subscription {}", message.id, id);
         return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
 }
