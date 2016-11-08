@@ -60,7 +60,7 @@ public class SubscriptionService {
          * Total judgement call here; we could have just as easily left them alone.
          */
         final ImmutableList<Message> filteredMessages = current.messages.stream()
-                .filter(msg -> messageTypes.contains(msg.type.toLowerCase()))
+                .filter(msg -> messageTypes.contains(msg.type))
                 .collect(collectingAndThen(toList(), ImmutableList::copyOf));
         final Subscription subscription =
                 new Subscription(id, name.orElse(current.name), messageTypes, filteredMessages);
@@ -77,7 +77,7 @@ public class SubscriptionService {
         }
 
         final Subscription current = getSubscriptionById(id);
-        if (!current.messageTypes.contains(type.toLowerCase())) {
+        if (!current.messageTypes.contains(type)) {
             log.info("Message not created due to unsupported type {}; supported = {}", type, current.messageTypes);
             throw new MessageTypeNotSupportedException("Subscription does not support messages of type " + type);
         }

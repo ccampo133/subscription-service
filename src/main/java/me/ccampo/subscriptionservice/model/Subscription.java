@@ -27,7 +27,7 @@ public class Subscription {
         this.name = name;
         this.messageTypes = messageTypes;
         // Not a huge fan of logic in the constructor, but it seemed the simplest approach
-        if (messages.stream().anyMatch(msg -> !messageTypes.contains(msg.type.toLowerCase()))) {
+        if (messages.stream().anyMatch(msg -> !messageTypes.contains(msg.type))) {
             throw new IllegalArgumentException("Must only contain messages with types defined in `messageTypes`");
         }
         this.messages = messages;
