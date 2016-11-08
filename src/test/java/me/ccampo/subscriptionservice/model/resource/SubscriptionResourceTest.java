@@ -14,7 +14,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 /**
  * @author Chris Campo
  */
-public class SubscriptionResponseResourceTest {
+public class SubscriptionResourceTest {
 
     @Test
     public void fromSubscription() {
@@ -29,7 +29,7 @@ public class SubscriptionResponseResourceTest {
                 new Message("type2", "e"),
                 new Message("type3", "f"));
         final Subscription subscription = new Subscription(id, name, types, messages);
-        final SubscriptionResponseResource resource = SubscriptionResponseResource.fromSubscription(subscription);
+        final SubscriptionResource resource = SubscriptionResource.fromSubscription(subscription);
 
         assertThat(resource.messageCountsByType)
                 .containsOnly(entry("type1", 3L), entry("type2", 2L), entry("type3", 1L));

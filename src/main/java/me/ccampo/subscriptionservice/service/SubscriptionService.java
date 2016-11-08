@@ -2,7 +2,6 @@ package me.ccampo.subscriptionservice.service;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import me.ccampo.subscriptionservice.exception.MessageTypeNotSupportedException;
 import me.ccampo.subscriptionservice.exception.SubscriptionNotFoundException;
 import me.ccampo.subscriptionservice.model.Message;
 import me.ccampo.subscriptionservice.model.Subscription;
@@ -11,10 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.stream.Collectors.collectingAndThen;
@@ -78,27 +74,23 @@ public class SubscriptionService {
         return subscription;
     }
 
+    public void sendMessageToSupportingSubscriptions(@NotNull final Message message) {
+        for (final Map.Entry<UUID, Subscription> entry : subscriptions.entrySet()) {
+            final Subscription current = entry.getValue();
+            if (current.supportsType(message.type)) {
+                log.info("Sending message to subscription {}", current.id);
+                final ImmutableList<Message> messages = ImmutableList.<Message>builder()
+                        .addAll(current.messages)
+                        .add(message)
+                        .build();
+                final Subscription updated = new Subscription(current.id, current.name, current.messageTypes, messages);
+                entry.setValue(updated);
+            }
+        }
+    }
+
     @NotNull
-    public Message createMessageForSubscription(@NotNull final UUID id, @NotNull final String type,
-            @NotNull final String contents) throws SubscriptionNotFoundException, MessageTypeNotSupportedException {
-        if (!subscriptionExists(id)) {
-            log.info("Subscription with ID {} was not found", id);
-            throw new SubscriptionNotFoundException("Subscription with ID " + id + " was not found");
-        }
-
-        final Subscription current = getSubscriptionById(id);
-        if (!current.messageTypes.contains(type)) {
-            log.info("Message not created due to unsupported type {}; supported = {}", type, current.messageTypes);
-            throw new MessageTypeNotSupportedException("Subscription does not support messages of type " + type);
-        }
-
-        final Message message = new Message(type, contents);
-        final ImmutableList<Message> messages = ImmutableList.<Message>builder()
-                .addAll(current.messages)
-                .add(message)
-                .build();
-        final Subscription updated = new Subscription(current.id, current.name, current.messageTypes, messages);
-        subscriptions.put(id, updated);
-        return message;
+    public List<Subscription> getSubscriptions() {
+        return ImmutableList.copyOf(subscriptions.values());
     }
 }
