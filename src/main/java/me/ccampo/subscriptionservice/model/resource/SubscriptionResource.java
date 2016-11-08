@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
+
 /**
  * @author Chris Campo
  */
@@ -41,6 +44,6 @@ public class SubscriptionResource {
     public static List<SubscriptionResource> fromSubscriptions(@NotNull final List<Subscription> subscriptions) {
         return subscriptions.stream()
                 .map(SubscriptionResource::fromSubscription)
-                .collect(Collectors.toCollection(ImmutableList::of));
+                .collect(collectingAndThen(toList(), ImmutableList::copyOf));
     }
 }
