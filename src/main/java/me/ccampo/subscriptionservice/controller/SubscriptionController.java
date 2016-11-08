@@ -36,6 +36,13 @@ public class SubscriptionController {
         this.subscriptionService = Objects.requireNonNull(subscriptionService, "subscriptionService");
     }
 
+    /**
+     * Creates a subscription, given a name and the list of messageTypes it should receive.
+     *
+     * @param name The name of the subscription
+     * @param messageTypes The list of messageTypes to receive
+     * @return An HTTP response containing the new subscription object
+     */
     @NotNull
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<SubscriptionResource> createSubscription(@RequestParam @NotNull final String name,
@@ -61,6 +68,12 @@ public class SubscriptionController {
         return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 
+    /**
+     * Gets a single subscription by its unique identifier
+     *
+     * @param id the UUID of the subscription
+     * @return an HTTP response containing the existing subscription object
+     */
     @NotNull
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<SubscriptionResource> getSubscriptionById(@PathVariable @NotNull final String id) {
@@ -71,7 +84,16 @@ public class SubscriptionController {
         return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 
-    /*
+    /**
+     * Updates an existing subscription object
+     *
+     * @param id the UUID of the subscription
+     * @param name the new name of the subscription (optional)
+     * @param messageTypes the new list of supported message types (optional)
+     * @return An HTTP entity containing the update subscription object
+     */
+    /* (non-Javadoc)
+     *
      * There's a lot of debate about whether or not you should support partial
      * updates with HTTP PUT. PUT should remain idempotent according to the
      * HTTP spec, so technically you should PUT the entire resource on every

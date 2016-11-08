@@ -32,12 +32,19 @@ public class MessageController {
         this.messageService = Objects.requireNonNull(messageService, "messageService");
     }
 
+    /**
+     * Creates a new message in the system
+     *
+     * @param type the type of message
+     * @param content the content of the message
+     * @return An HTTP entity containing the new message object
+     */
     @NotNull
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Message> createMessage(@RequestParam @NotNull final String type,
-            @RequestParam @NotNull final String contents) {
-        log.info("POST /messages; type = {}, contents = {}", type, contents);
-        final Message message = messageService.createMessage(type, contents);
+            @RequestParam @NotNull final String content) {
+        log.info("POST /messages; type = {}, content = {}", type, content);
+        final Message message = messageService.createMessage(type, content);
         log.info("Successfully created message with ID {}", message.id);
         return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
