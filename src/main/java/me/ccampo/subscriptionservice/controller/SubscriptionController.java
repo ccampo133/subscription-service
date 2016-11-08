@@ -61,7 +61,7 @@ public class SubscriptionController {
 
     // Not part of the API spec, but useful for debugging at least
     @NotNull
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<SubscriptionResource>> getAllSubscriptions() {
         final List<SubscriptionResource> resources =
                 SubscriptionResource.fromSubscriptions(subscriptionService.getSubscriptions());
