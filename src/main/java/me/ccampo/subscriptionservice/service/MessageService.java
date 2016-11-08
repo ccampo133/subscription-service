@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -51,7 +50,7 @@ public class MessageService {
      * completeness.
      */
     @NotNull
-    public List<Message> getMessages() {
+    public ImmutableList<Message> getMessages() {
         return ImmutableList.copyOf(messages.toArray(new Message[0]));
     }
 }

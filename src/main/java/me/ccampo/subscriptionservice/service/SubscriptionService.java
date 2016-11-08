@@ -99,7 +99,7 @@ public class SubscriptionService {
     }
 
     @NotNull
-    public List<Subscription> getSubscriptions() {
+    public ImmutableList<Subscription> getSubscriptions() {
         return ImmutableList.copyOf(subscriptions.values());
     }
 }
