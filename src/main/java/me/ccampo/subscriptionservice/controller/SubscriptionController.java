@@ -105,9 +105,18 @@ public class SubscriptionController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<SubscriptionResource> updateSubscriptionById(@PathVariable @NotNull final String id,
             @RequestParam @NotNull final Optional<String> name,
-            @RequestParam(required = false, defaultValue = "") @NotNull final List<String> messageTypes) {
+            // Note: usually I'd prefer defaulting to an empty collection instead of an optional,
+            // but this allows for the case where we want to remove all supported message types
+            // by passing an empty list here, as opposed to not changing the message types at all
+            // by omitting the parameter altogether.
+            @RequestParam @NotNull final Optional<List<String>> messageTypes) {
         log.info("PUT /subscriptions/{}; name = {}, messageTypes = {}", id, name, messageTypes);
-        final ImmutableSet<String> types = ImmutableSet.copyOf(messageTypes);
+        if (!name.isPresent() && !messageTypes.isPresent()) {
+            // Nothing to do
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        final Optional<ImmutableSet<String>> types = messageTypes.map(ImmutableSet::copyOf);
         final Subscription subscription = subscriptionService.updateSubscriptionById(UUID.fromString(id), name, types);
         final SubscriptionResource resource = SubscriptionResource.fromSubscription(subscription);
         log.info("Successfully updated subscription with ID {}", id);

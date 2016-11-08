@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import me.ccampo.subscriptionservice.exception.SubscriptionNotFoundException;
 import me.ccampo.subscriptionservice.model.Message;
 import me.ccampo.subscriptionservice.model.Subscription;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,19 +60,27 @@ public class SubscriptionService {
 
     @NotNull
     public Subscription updateSubscriptionById(@NotNull final UUID id, @NotNull final Optional<String> name,
-            @NotNull final ImmutableSet<String> messageTypes) {
+            @NotNull final Optional<ImmutableSet<String>> messageTypes) {
         final Subscription current = getSubscriptionById(id);
-        /*
-         * Here we remove any messages whose types are no longer supported by this subscription.
-         * Total judgement call here; we could have just as easily left them alone.
-         */
-        final ImmutableList<Message> filteredMessages = current.messages.stream()
+         // Here we remove any messages whose types are no longer supported by this subscription.
+         // This is a complete judgement call; we could have just as easily left them alone.
+        final ImmutableList<Message> filteredMessages = messageTypes
+                .map(types -> filterMessages(current.messages, types))
+                .orElse(current.messages);
+        final Subscription updated =
+                new Subscription(id, name.orElse(current.name), messageTypes.orElse(current.messageTypes),
+                        filteredMessages);
+        subscriptions.put(id, updated);
+        return updated;
+    }
+
+    @NotNull
+    @Contract(pure = true)
+    private static ImmutableList<Message> filterMessages(@NotNull final ImmutableList<Message> messages,
+            @NotNull final ImmutableSet<String> messageTypes) {
+        return messages.stream()
                 .filter(msg -> messageTypes.contains(msg.type))
                 .collect(collectingAndThen(toList(), ImmutableList::copyOf));
-        final Subscription subscription =
-                new Subscription(id, name.orElse(current.name), messageTypes, filteredMessages);
-        subscriptions.put(id, subscription);
-        return subscription;
     }
 
     public void sendMessageToSupportingSubscriptions(@NotNull final Message message) {
