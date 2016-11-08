@@ -2,6 +2,8 @@ buildscript {
     ext {
         springBootVersion = "1.4.1.RELEASE"
         annotationsVersion = "15.0"
+        assertJVersion = "3.5.2"
+        guavaVersion = "20.0"
     }
     repositories {
         mavenCentral()
@@ -32,7 +34,9 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-devtools")
     compile("org.jetbrains:annotations:${annotationsVersion}")
+    compile("com.google.guava:guava:${guavaVersion}")
     testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile("org.assertj:assertj-core:${assertJVersion}")
 }
 
 task wrapper(type: Wrapper) {
