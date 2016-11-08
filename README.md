@@ -36,6 +36,8 @@ Linux/OS X:
 
 Once started, the application will run on `http://localhost:8080` by default.
 
+A bunch of sample `cURL` commands have been included in `example-curls.sh`.
+
 # API Specifications
 
 The serialization format for all responses is JSON.
