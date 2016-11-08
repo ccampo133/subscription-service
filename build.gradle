@@ -2,6 +2,8 @@ buildscript {
     ext {
         springBootVersion = "1.4.1.RELEASE"
         annotationsVersion = "15.0"
+        assertJVersion = "3.5.2"
+        guavaVersion = "20.0"
     }
     repositories {
         mavenCentral()
@@ -15,6 +17,7 @@ apply plugin: "java"
 apply plugin: "eclipse"
 apply plugin: "idea"
 apply plugin: "spring-boot"
+apply plugin: "jacoco"
 
 jar {
     baseName = "subscription-service"
@@ -32,9 +35,13 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-devtools")
     compile("org.jetbrains:annotations:${annotationsVersion}")
+    compile("com.google.guava:guava:${guavaVersion}")
     testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile("org.assertj:assertj-core:${assertJVersion}")
 }
 
 task wrapper(type: Wrapper) {
     gradleVersion = "3.1"
 }
+
+jacocoTestReport.dependsOn test
