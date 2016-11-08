@@ -33,8 +33,8 @@ public class MessageService {
     }
 
     @NotNull
-    public Message createMessage(@NotNull final String type, @NotNull final String contents) {
-        final Message message = new Message(type, contents);
+    public Message createMessage(@NotNull final String type, @NotNull final String content) {
+        final Message message = new Message(type, content);
         messages.offer(message);
         subscriptionService.sendMessageToSupportingSubscriptions(message);
         return message;
