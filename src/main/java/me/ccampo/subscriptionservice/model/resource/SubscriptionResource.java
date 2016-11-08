@@ -6,7 +6,6 @@ import me.ccampo.subscriptionservice.model.Subscription;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -41,7 +40,8 @@ public class SubscriptionResource {
     }
 
     @NotNull
-    public static List<SubscriptionResource> fromSubscriptions(@NotNull final List<Subscription> subscriptions) {
+    public static ImmutableList<SubscriptionResource> fromSubscriptions(
+            @NotNull final ImmutableList<Subscription> subscriptions) {
         return subscriptions.stream()
                 .map(SubscriptionResource::fromSubscription)
                 .collect(collectingAndThen(toList(), ImmutableList::copyOf));

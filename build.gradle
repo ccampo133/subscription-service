@@ -17,6 +17,7 @@ apply plugin: "java"
 apply plugin: "eclipse"
 apply plugin: "idea"
 apply plugin: "spring-boot"
+apply plugin: "jacoco"
 
 jar {
     baseName = "subscription-service"
@@ -42,3 +43,5 @@ dependencies {
 task wrapper(type: Wrapper) {
     gradleVersion = "3.1"
 }
+
+jacocoTestReport.dependsOn test

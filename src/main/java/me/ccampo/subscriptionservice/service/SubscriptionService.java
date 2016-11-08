@@ -11,7 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.stream.Collectors.collectingAndThen;
@@ -60,10 +63,10 @@ public class SubscriptionService {
 
     @NotNull
     public Subscription updateSubscriptionById(@NotNull final UUID id, @NotNull final Optional<String> name,
-            @NotNull final Optional<ImmutableSet<String>> messageTypes) {
+            @NotNull final Optional<ImmutableSet<String>> messageTypes) throws SubscriptionNotFoundException {
         final Subscription current = getSubscriptionById(id);
-         // Here we remove any messages whose types are no longer supported by this subscription.
-         // This is a complete judgement call; we could have just as easily left them alone.
+        // Here we remove any messages whose types are no longer supported by this subscription.
+        // This is a complete judgement call; we could have just as easily left them alone.
         final ImmutableList<Message> filteredMessages = messageTypes
                 .map(types -> filterMessages(current.messages, types))
                 .orElse(current.messages);
@@ -76,7 +79,7 @@ public class SubscriptionService {
 
     @NotNull
     @Contract(pure = true)
-    private static ImmutableList<Message> filterMessages(@NotNull final ImmutableList<Message> messages,
+    protected static ImmutableList<Message> filterMessages(@NotNull final ImmutableList<Message> messages,
             @NotNull final ImmutableSet<String> messageTypes) {
         return messages.stream()
                 .filter(msg -> messageTypes.contains(msg.type))

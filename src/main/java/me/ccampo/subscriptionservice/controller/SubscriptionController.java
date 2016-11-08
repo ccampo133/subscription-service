@@ -39,7 +39,7 @@ public class SubscriptionController {
     /**
      * Creates a subscription, given a name and the list of messageTypes it should receive.
      *
-     * @param name The name of the subscription
+     * @param name         The name of the subscription
      * @param messageTypes The list of messageTypes to receive
      * @return An HTTP response containing the new subscription object
      */
@@ -87,8 +87,8 @@ public class SubscriptionController {
     /**
      * Updates an existing subscription object
      *
-     * @param id the UUID of the subscription
-     * @param name the new name of the subscription (optional)
+     * @param id           the UUID of the subscription
+     * @param name         the new name of the subscription (optional)
      * @param messageTypes the new list of supported message types (optional)
      * @return An HTTP entity containing the update subscription object
      */
